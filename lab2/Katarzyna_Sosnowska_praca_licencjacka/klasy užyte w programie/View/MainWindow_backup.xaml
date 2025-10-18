@@ -1,0 +1,264 @@
+﻿<Window x:Class="Lintree.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vmodel="clr-namespace:Lintree.ViewModel"
+        xmlns:conv="clr-namespace:Lintree.Converters"
+        Title="Lintree 3D Plant Generator by Katarzyna Sosnowska"
+        Height="500" Width="750"
+        Background="{StaticResource dark_AppBackground}">
+    
+    <Window.DataContext>
+        <vmodel:MainViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <conv:PercentageConverter x:Key="percentageConv"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Menu aplikacji -->
+        <Menu Grid.Row="0" IsMainMenu="True">
+            <MenuItem Header="File" Uid="menuFileHeader">
+                <MenuItem Header="New..." Uid="menuFile_new"/>
+                <Separator/>
+                <MenuItem Header="Save model..." Uid="menuFile_saveModel"/>
+                <MenuItem Header="Load model..." Uid="menuFile_loadModel"/>
+                <Separator/>
+                <MenuItem Header="Save L-system..." Uid="menuFile_savePattern"/>
+                <MenuItem Header="Load L-system..." Uid="menuFile_loadPattern"/>
+                <Separator/>
+                <MenuItem Header="Quit" Uid="menuFile_quit"/>
+            </MenuItem>
+            <MenuItem Header="_Settings" Uid="menuSettingsHeader">
+                <MenuItem Header="Change language" Uid="menuSettings_language">
+                    <MenuItem Header="Polish" Uid="menuSettings_language_pl" IsCheckable="True"/>
+                    <MenuItem Header="English" Uid="menuSettings_language_en" IsCheckable="True"
+                              IsChecked="True"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Help" Uid="menuHelpHeader">
+                <MenuItem Header="About program" Uid="menuHelpHeader_about"/>
+                <MenuItem Header="View help" Uid="menuHelpHeader_help"/>
+            </MenuItem>
+        </Menu>
+        
+        <!-- Obszar roboczy aplikacji -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Name="viewModelPanel" Grid.Column="0"
+                  Background="{StaticResource dark_OptionPanelBackground}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Kontener Grid na element Viewport3D (scenę 3D) -->
+                <Grid Name="viewportGrid" Grid.Row="0" Tag="{Binding ElementName=viewportGrid}"
+                      Background="{StaticResource dark_Viewport3DBackground}" Margin="3,3,3,0">
+                    <Viewport3D x:Name="windowViewport"/>
+                </Grid>
+
+                <Label Content="Drag to rotate the view" Uid="viewport3Dinfo" Grid.Row="0"
+                       VerticalAlignment="Bottom" Margin="5,0"
+                       Foreground="{DynamicResource dark_TextBoxBackground}" Background="{x:Null}"/>
+                
+                <StackPanel Grid.Row="1" Style="{StaticResource OptionButtonsContainerStyle}">
+                    <Button Name="saveModelButt" Style="{StaticResource OptionButtonStyle}"
+                            Uid="saveModelButt" Content="Save model..."
+                            Command="{Binding Path=SaveCurrentModel}"/>
+                    <Button Name="loadModelButt" Style="{StaticResource OptionButtonStyle}"
+                            Uid="loadModelButt" Content="Load model..."/>
+                </StackPanel>
+
+            </Grid>
+
+            <Grid Name="optionsPanelContainer" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <ScrollViewer Name="optionsPanel" Grid.Row="0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Panel zawierający szczegóły konstrukcji modelu 3D rośliny -->
+                        <Expander Header="Construction settings" Uid="constructionSettLabel" Grid.Row="0"
+                                  Style="{StaticResource ExpanderOptionPanelStyle}">
+                            <Grid Name="optConstructionPanel">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="4*"/>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="1*"/>
+                                </Grid.RowDefinitions>
+                                
+                                <Grid Grid.Row="0" Style="{StaticResource OptionPanelGridStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <Label Uid="initialAngleLabel" Content="Initial angle:"
+                                           Grid.Column="0" Grid.Row="0" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=InitAngle, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="0" Style="{StaticResource OptionFieldStyle}"/>
+                                    <Label Uid="rotationAngleLabel" Content="Rotation angle:"
+                                           Grid.Column="0" Grid.Row="1" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=RotAngle, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="1" Style="{StaticResource OptionFieldStyle}"/>
+                                    <Label Uid="deviationAngleLabel" Content="Deviation of angle:"
+                                           Grid.Column="0" Grid.Row="2" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=DevAngle, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="2" Style="{StaticResource OptionFieldStyle}"/>
+                                    <Label Uid="iterationsAmountLabel" Content="Iterations:"
+                                           Grid.Column="0" Grid.Row="3" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=Iterations, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="3" Style="{StaticResource OptionFieldStyle}"/>
+                                </Grid>
+
+                                <StackPanel Grid.Row="1" Style="{StaticResource OptionContainerVerticalStyle}">
+                                    <Label Uid="axiomLabel" Content="Axiom:"
+                                           Style="{StaticResource OptionLabelSecondStyle}"/>
+                                    <TextBox Text="{Binding Path=Axiom, Mode=TwoWay}"
+                                             Style="{StaticResource OptionLongFieldStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Style="{StaticResource OptionContainerVerticalStyle}">
+                                    <Label Uid="rulesLabel" Content="Rules:"
+                                           Style="{StaticResource OptionLabelSecondStyle}"/>
+                                    <TextBox Name="rules" Height="60" AcceptsReturn="True"
+                                             Text="{Binding Path=Rules, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource OptionLongFieldStyle}"/>
+                                </StackPanel>
+
+                                <Grid Grid.Row="3" Style="{StaticResource OptionPanelGridStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <Label Uid="sidesNumberLabel" Content="Number of sides:"
+                                           Grid.Column="0" Grid.Row="0" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=SidesNumber, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="0" Style="{StaticResource OptionFieldStyle}"/>                                    
+                                    <Label Uid="segmentLengthLabel" Content="Trunk length:"
+                                           Grid.Column="0" Grid.Row="1" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=SegmLength, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="1" Style="{StaticResource OptionFieldStyle}"/>
+                                    <Label Uid="CutLengthFactorLabel" Content="Cut length factor:"
+                                           Grid.Column="0" Grid.Row="2" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=CutLenFactor, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="2" Style="{StaticResource OptionFieldStyle}"/>
+                                    <Label Uid="segmentThicknessLabel" Content="Trunk thickness:"
+                                           Grid.Column="0" Grid.Row="3" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=SegmThickness, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="3" Style="{StaticResource OptionFieldStyle}"/>
+                                    <Label Uid="CutThicknessFactorLabel" Content="Cut thickness factor:"
+                                           Grid.Column="0" Grid.Row="4" Style="{StaticResource OptionLabelStyle}"/>
+                                    <TextBox Text="{Binding Path=CutThiFactor, Mode=TwoWay}"
+                                             Grid.Column="1" Grid.Row="4" Style="{StaticResource OptionFieldStyle}"/>
+                                </Grid>
+
+                                <StackPanel Grid.Row="4" Style="{StaticResource OptionButtonsContainerStyle}">
+                                    <Button Name="saveConstructionSettButt" Style="{StaticResource OptionButtonStyle}"
+                                            Uid="saveConstructionSettButt" Content="Save..."
+                                            Command="{Binding Path=SaveCurrentPattern}"/>
+                                    <Button Name="loadConstructionSettButt" Style="{StaticResource OptionButtonStyle}"
+                                            Uid="loadConstructionSettButt" Content="Load..."
+                                            Command="{Binding Path=LoadSavedPattern}"/>
+                                </StackPanel>
+
+                            </Grid>
+                        </Expander>
+                        
+                        <!-- Panel zawierający szczegóły dotyczące tekstury pnia -->
+                        <Expander Header="Trunk texture" Uid="textureLabel" Grid.Row="1"
+                                  Style="{StaticResource ExpanderOptionPanelStyle}">
+                            <Grid Name="optTexturePanel" Grid.Row="1"
+                                  Style="{StaticResource OptionPanelGridStyle_v2}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <ListView Name="textureListView" Grid.Column="0" Grid.Row="0"
+                                          ItemsSource="{Binding Path=TextureList}"
+                                          SelectionMode="Single"
+                                          SelectedItem="{Binding Path=SelectedTexture}"
+                                          Style="{StaticResource ListViewStyle}">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Width="{Binding Path=ActualWidth, ElementName=textureListView,
+                                                                Converter={StaticResource percentageConv},
+                                                                ConverterParameter='0,95'}"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Width="46" Height="60" ToolTip="{Binding TextureName}">
+                                                <Image Width="40" Height="40"
+                                                       Source="{Binding Path=TextureImage}"/>
+                                                <TextBlock Text="{Binding Path=TextureNameShort}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+
+                                <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource OptionButtonsContainerStyle}">
+                                    <Button Name="removeTextureButt" Style="{StaticResource OptionButtonStyle}"
+                                            Uid="removeTextureButt" Content="Remove..."
+                                            IsEnabled="{Binding ElementName=textureListView, Path=SelectedItems.Count}"
+                                            Command="{Binding Path=RemoveChosenTexture}"
+                                            CommandParameter="{Binding ElementName=textureListView, Path=SelectedItem}"/>
+                                    <Button Name="addTextureButt" Style="{StaticResource OptionButtonStyle}"
+                                            Uid="addTaxtureButt" Content="Add..."
+                                            Command="{Binding Path=AddNewTexture}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander>
+                        
+                    </Grid>
+                
+                </ScrollViewer>
+
+                <!-- Panel zawierający przycisk wyzwalający algorytm generowania modelu 3D -->
+                <Grid Grid.Row="1" Background="{Binding Source={StaticResource dark_GenerateButtonPanelBackground}}">
+                    <Button Name="generateButt" Content="Generate"
+                            Style="{StaticResource GenerateButtonStyle}"
+                            Command="{Binding Path=GenerateNewModel}"
+                            CommandParameter="{Binding ElementName=viewportGrid, Path=Tag}"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

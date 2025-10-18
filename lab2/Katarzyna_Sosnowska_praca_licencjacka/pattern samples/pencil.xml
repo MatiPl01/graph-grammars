@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<pattern>
+  <l-system>
+    <axiom>FFFFFFF</axiom>
+    <rules>
+      <rule>F=F</rule>
+    </rules>
+    <iterations>3</iterations>
+  </l-system>
+  <model-param>
+    <initAngle>0</initAngle>
+    <rotAngle>60</rotAngle>
+    <devAngle>5</devAngle>
+    <nrSides>8</nrSides>
+    <segmentLength>5</segmentLength>
+    <cutLengthFactor>1</cutLengthFactor>
+    <segmentThickness>5</segmentThickness>
+    <cutThicknessFactor>1</cutThicknessFactor>
+  </model-param>
+</pattern>
